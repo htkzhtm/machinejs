@@ -4,8 +4,15 @@
     <p>The MobileNet model labeled this as
     <span ref="result">...</span> with a confidence of
     <span ref="confidence">...</span></p>
-    <img src="bird.jpg"
-     crossorigin="anonymous" width="400" ref="image">
+    <img src="pikachu.png" crossorigin="anonymous" width="400" ref="image">
+    <img src="pikachu2.png" crossorigin="anonymous" width="400" ref="image2">
+    <img src="pikachu3.png" crossorigin="anonymous" width="400" ref="image3">
+    <img src="pikachu5.jpg" crossorigin="anonymous" width="400" ref="image9">
+    <img src="purasuru1.png" crossorigin="anonymous" width="400" ref="image4">
+    <img src="purasuru2.jpg" crossorigin="anonymous" width="400" ref="image5">
+    <img src="purasuru3.jpg" crossorigin="anonymous" width="400" ref="image6">
+    <img src="purasuru4.jpeg" crossorigin="anonymous" width="400" ref="image8">
+    <img src="pikachu4.jpg" crossorigin="anonymous" width="400" ref="image7">
   </div>
 </template>
 
@@ -18,21 +25,30 @@ export default {
     HelloWorld
   },
 
-  mounted () {
-      const image = this.$refs.image;
-
-      const result = this.$refs.result;
-
-      const confidence = this.$refs.confidence;
-
-      const classifier = ml5.imageClassifier('MobileNet', function() {
+  async mounted () {    
+      const featureExtractor = ml5.featureExtractor('MobileNet', () => {
         console.log('Model Loaded!');
       });
+      const trainClassifier = featureExtractor.classification();
+      await trainClassifier.addImage(this.$refs.image, 'pikachu');
+      await trainClassifier.addImage(this.$refs.image2, 'pikachu');
+      await trainClassifier.addImage(this.$refs.image3, 'pikachu');
+      await trainClassifier.addImage(this.$refs.image9, 'pikachu');
+      await trainClassifier.addImage(this.$refs.image4, 'purasuru');
+      await trainClassifier.addImage(this.$refs.image5, 'purasuru');
+      await trainClassifier.addImage(this.$refs.image6, 'purasuru');
+      await trainClassifier.addImage(this.$refs.image8, 'purasuru');
 
-      classifier.predict(image, function(err, results) {
-        result.innerText = results[0].label;
-        confidence.innerText = results[0].confidence.toFixed(4);
-      });  
+      await trainClassifier.train(function(lossValue) {
+        console.log('Loss is', lossValue)
+      });
+
+      console.log(this.$refs.image7)
+
+      trainClassifier.classify(this.$refs.image7, function(err, result) {
+        console.log(result)
+      });
+
   }
 }
 </script>
