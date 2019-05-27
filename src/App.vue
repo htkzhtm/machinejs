@@ -1,7 +1,11 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <h1>Image classification using MobileNet</h1>
+    <p>The MobileNet model labeled this as
+    <span ref="result">...</span> with a confidence of
+    <span ref="confidence">...</span></p>
+    <img src="bird.jpg"
+     crossorigin="anonymous" width="400" ref="image">
   </div>
 </template>
 
@@ -12,6 +16,23 @@ export default {
   name: 'app',
   components: {
     HelloWorld
+  },
+
+  mounted () {
+      const image = this.$refs.image;
+
+      const result = this.$refs.result;
+
+      const confidence = this.$refs.confidence;
+
+      const classifier = ml5.imageClassifier('MobileNet', function() {
+        console.log('Model Loaded!');
+      });
+
+      classifier.predict(image, function(err, results) {
+        result.innerText = results[0].label;
+        confidence.innerText = results[0].confidence.toFixed(4);
+      });  
   }
 }
 </script>
